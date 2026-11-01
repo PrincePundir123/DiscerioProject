@@ -1,0 +1,56 @@
+services:
+  # 1. Game Server (Bun WebSocket & Physics Server)
+  - type: web
+    name: discer-game-server
+    runtime: docker
+    dockerfilePath: ./game_environment/Dockerfile.server
+    dockerContext: ./game_environment
+    plan: free
+    region: oregon
+    envVars:
+      - key: PORT
+        value: 8000
+
+  # 2. Game Client (Vite 2D Canvas)
+  - type: web
+    name: discer-game-client
+    runtime: docker
+    dockerfilePath: ./game_environment/Dockerfile.client
+    dockerContext: ./game_environment
+    plan: free
+    region: oregon
+    envVars:
+      - key: PORT
+        value: 3000
+
+  # 3. Backend (FastAPI Python LLM Orchestration)
+  - type: web
+    name: discer-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    region: oregon
+    envVars:
+      - key: LLM_PROVIDER
+        value: openai
+      - key: DEFAULT_MODEL
+        value: gpt-4o-mini
+      - key: STEP_DELAY
+        value: "4.0"
+      - key: LLM_TIMEOUT
+        value: "10.0"
+      - key: OPENAI_API_KEY
+        sync: false
+
+  # 4. Frontend (Next.js 14 Web Application)
+  - type: web
+    name: discer-frontend
+    runtime: docker
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    plan: free
+    region: oregon
+    envVars:
+      - key: PORT
+        value: 3000
