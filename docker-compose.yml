@@ -13,7 +13,19 @@ services:
     environment:
       - PORT=8000
 
-  # 2. Agent Orchestration Backend (FastAPI + LLMs)
+  # 2. Game Environment 2D Canvas Web Client
+  game-client:
+    build:
+      context: ./game_environment
+      dockerfile: Dockerfile.client
+    container_name: discerio-game-client
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    depends_on:
+      - game-server
+
+  # 3. Agent Orchestration Backend (FastAPI + LLMs)
   backend:
     build:
       context: ./backend
@@ -32,7 +44,7 @@ services:
     depends_on:
       - game-server
 
-  # 3. Frontend Next.js Web Application
+  # 4. Frontend Next.js Web Application
   frontend:
     build:
       context: ./frontend
@@ -46,6 +58,7 @@ services:
       - NEXT_PUBLIC_GAME_URL=http://localhost:3000
     depends_on:
       - backend
+      - game-client
 
 networks:
   default:

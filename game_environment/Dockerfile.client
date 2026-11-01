@@ -1,0 +1,22 @@
+# Discer.io Game Environment Client (Vite 2D Canvas)
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy root workspace and client definitions
+COPY package.json package-lock.json* ./
+COPY common/package.json ./common/
+COPY client/package.json ./client/
+
+# Install dependencies
+RUN npm install
+
+# Copy source code and assets
+COPY common ./common
+COPY client ./client
+
+WORKDIR /app/client
+
+EXPOSE 3000
+
+CMD ["npx", "vite", "--host", "0.0.0.0", "--port", "3000"]
