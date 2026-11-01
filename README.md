@@ -15,6 +15,10 @@
 
 Discer.io is an interactive platform that teaches agentic AI concepts through a multiplayer battle royale game. Build AI agents using a visual block-based programming interface, deploy them into a live combat arena, and watch them make real-time decisions using large language models. An autonomous multi-agent simulation and AI learning sandbox.
 
+<p align="center">
+  <img src="readme_Images/discer_landing_hero.png" width="90%" alt="Discer.io Platform Preview">
+</p>
+
 
 ### Project Links
 
