@@ -393,7 +393,7 @@ export class Game {
         }
     }
 
-    checkInteractions(player: Player | AIAgent): void {
+    checkInteractions(player: any): void {
         const interactRadiusSquared = 10 * 10; // 10 unit interaction radius
 
         for (const obstacle of this.obstacles) {
