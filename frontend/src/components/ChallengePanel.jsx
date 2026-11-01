@@ -10,58 +10,58 @@ function ChallengePanel({ onChallengeSelect, currentChallenge }) {
   const challenges = [
     {
       id: 'obstacle-avoidance',
-      title: 'Obstacle Avoidance',
+      title: 'Zone 2 Gate Puzzle',
       difficulty: 'Beginner',
       icon: '🚧',
-      description: 'Help your agent navigate around obstacles to reach the goal.',
+      description: 'Navigate to the security gate in Zone 2, speak the secret password, and grab the XP orb.',
       objectives: [
-        'Add SENSE to detect obstacles',
-        'Use PLAN to find a path',
-        'Connect ACT to move',
-        'Add REFLECT to learn'
+        'Add "On Start" entry point',
+        'Connect to Agent (LLM) block',
+        'Connect "Move" and "Speak" tools',
+        'Speak "zohran mamdani" to open gate'
       ],
-      hint: 'Start by making your agent see! Drag a SENSE block first.'
+      hint: 'Configure your agent to say "zohran mamdani" near the gate to open it!'
     },
     {
       id: 'efficient-path',
-      title: 'Find Efficient Path',
+      title: 'Tactical Combat Survival',
       difficulty: 'Intermediate',
       icon: '🎯',
-      description: 'Make your agent find the shortest path to the goal.',
+      description: 'Survive in the combat arena by finding ammo and engaging hostile targets.',
       objectives: [
-        'Sense multiple possible paths',
-        'Plan the shortest route',
-        'Execute the movement',
-        'Reflect on efficiency'
+        'Connect Agent to "Move" tool',
+        'Connect Agent to "Attack" and "Collect"',
+        'Equip weapon and manage ammunition',
+        'Score a combat victory'
       ],
-      hint: 'Planning is key! Your agent needs to think before moving.'
+      hint: 'Make sure your agent collects ammo when empty or switches to fists!'
     },
     {
       id: 'learning-agent',
-      title: 'Learning from Mistakes',
-      difficulty: 'Intermediate',
+      title: 'Strategic Planning with MCP',
+      difficulty: 'Advanced',
       icon: '🧠',
-      description: 'Build an agent that improves after failing.',
+      description: 'Use the Plan tool to decompose complex survival strategies across game steps.',
       objectives: [
-        'Try to reach goal (will fail)',
-        'Use REFLECT to analyze failure',
-        'Adjust strategy in PLAN',
-        'Succeed on retry'
+        'Add "Plan" block to your agent',
+        'Configure prompt to prioritize long-term goals',
+        'Execute multi-step pathfinding',
+        'Reach maximum XP level'
       ],
-      hint: 'Failure is part of learning! Add REFLECT to remember what didn\'t work.'
+      hint: 'The Plan tool uses advanced reasoning to formulate tactical steps before moving.'
     },
     {
       id: 'freeform',
-      title: 'Free Exploration',
+      title: 'Free Exploration Arena',
       difficulty: 'Open',
       icon: '🎨',
-      description: 'Experiment freely and create your own agent behavior!',
+      description: 'Experiment freely with custom prompts and deploy multiple agents to compete!',
       objectives: [
-        'Try different block combinations',
-        'Observe what happens',
-        'Build your intuition'
+        'Try different LLM models',
+        'Tweak system & user prompts',
+        'Observe emergent multi-agent strategies'
       ],
-      hint: 'No rules! Play around and see what your agent can do.'
+      hint: 'Deploy multiple tabs to watch your agents battle each other in real-time!'
     }
   ];
 

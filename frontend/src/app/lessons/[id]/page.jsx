@@ -1002,6 +1002,7 @@ function LessonBuilder({ lesson, config, isStarred, onToggleStar }) {
   const [chatHeight, setChatHeight] = useState(300); // Default height in pixels
   const [isResizing, setIsResizing] = useState(false);
   const [lessonProgress, setLessonProgress] = useState({}); // Track completion of each guideline
+  const [challengeCompleted, setChallengeCompleted] = useState(false);
   const [registeredAgents, setRegisteredAgents] = useState([]);
   const [loadingAgents, setLoadingAgents] = useState(false);
   const [showAgentsPanel, setShowAgentsPanel] = useState(false);
@@ -1033,6 +1034,53 @@ function LessonBuilder({ lesson, config, isStarred, onToggleStar }) {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
+
+  // Poll agent state and check for challenge completion
+  useEffect(() => {
+    if (!isClient) return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/agents-state`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.agents && agentId && data.agents[agentId]) {
+            const agentState = data.agents[agentId];
+            const challenges = agentState.challenges_completed || [];
+
+            // Check if Lesson 1 or current lesson challenge completed
+            const isLessonComplete = challenges.includes(`lesson_${lesson?.id}_completed`) || 
+                                     (lesson?.id === 1 && (challenges.includes('lesson_1_completed') || (challenges.includes('gate_unlocked') && challenges.includes('xp_orb_collected'))));
+
+            if (isLessonComplete && !challengeCompleted) {
+              setChallengeCompleted(true);
+              toast.success(`🎉 Challenge Complete! You finished Lesson ${lesson?.id}!`, { duration: 6000 });
+              
+              // Persist completion in localStorage for roadmap progress
+              if (typeof window !== 'undefined') {
+                const currentProgress = JSON.parse(localStorage.getItem('lessonProgress') || '{}');
+                currentProgress[lesson?.id] = 'completed';
+                localStorage.setItem('lessonProgress', JSON.stringify(currentProgress));
+              }
+
+              // Mark all guidelines as complete
+              if (config.lessonGuidelines) {
+                const completedGuidelines = {};
+                config.lessonGuidelines.forEach((_, idx) => {
+                  completedGuidelines[idx] = true;
+                });
+                setLessonProgress(completedGuidelines);
+              }
+            }
+          }
+        }
+      } catch (err) {
+        // silent polling catch
+      }
+    }, 1000);
+
+    return () => clearInterval(pollInterval);
+  }, [isClient, agentId, lesson?.id, challengeCompleted, config.lessonGuidelines]);
 
   // Function to check and update progress
   const checkProgress = (currentProgress = {}) => {
@@ -2302,6 +2350,19 @@ function LessonBuilder({ lesson, config, isStarred, onToggleStar }) {
         {/* Bottom - Deploy Button (only show in game view) */}
         {leftPanelView === 'game' && (
           <div className={`p-3 border-t ${theme.border.primary} flex-shrink-0`}>
+            {challengeCompleted && (
+              <div className="mb-3 p-3 bg-gradient-to-r from-emerald-500/20 to-green-500/20 border-2 border-emerald-500 rounded-lg text-center animate-pulse">
+                <p className="text-emerald-400 font-bold text-sm">🎉 Lesson {lesson?.id} Completed!</p>
+                {LESSONS.find(l => l.id === (lesson?.id || 0) + 1) && (
+                  <Link
+                    href={`/lessons/${(lesson?.id || 0) + 1}`}
+                    className="inline-block mt-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-1.5 px-3 rounded text-xs transition-colors shadow"
+                  >
+                    Next Lesson ➡️
+                  </Link>
+                )}
+              </div>
+            )}
             <button
               onClick={handleDeploy}
               disabled={deploying}
