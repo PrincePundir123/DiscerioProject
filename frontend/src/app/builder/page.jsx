@@ -395,7 +395,6 @@ export default function AgentGameBuilder() {
     reader.readAsText(file);
     e.target.value = '';
   };
-  };
 
   // Load from localStorage only on client side after mount
   useEffect(() => {
