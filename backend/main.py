@@ -457,6 +457,10 @@ class AgentState(BaseModel):
         default_factory=list,
         description="History of past actions taken by the agent (limited to MAX_ACTION_HISTORY)"
     )
+    challenges_completed: List[str] = Field(
+        default_factory=list,
+        description="List of game challenges completed by the agent"
+    )
 
 
 class GameState(BaseModel):
@@ -1129,6 +1133,11 @@ async def process_single_agent_step(
 
     try:
         game_state_dict = game_states[agent_id]
+        agent_obj = agents.get(agent_id)
+        if agent_obj and "challenges_completed" in game_state_dict:
+            for ch in game_state_dict["challenges_completed"]:
+                if ch not in agent_obj.challenges_completed:
+                    agent_obj.challenges_completed.append(ch)
 
         # Create request for existing next-step-for-agents endpoint
         next_step_request = NextStepRequest(
@@ -1148,11 +1157,18 @@ async def process_single_agent_step(
                 action.parameters
             )
 
+            cmd_state = command_result.get("game_state", {})
+            if agent_obj and "challenges_completed" in cmd_state:
+                for ch in cmd_state["challenges_completed"]:
+                    if ch not in agent_obj.challenges_completed:
+                        agent_obj.challenges_completed.append(ch)
+
             return agent_id, {
                 "action": action.tool_type,
                 "parameters": action.parameters,
                 "next_node": next_step_response.current_node,
-                "game_response": command_result.get("success", False)
+                "game_response": command_result.get("success", False),
+                "challenges_completed": list(agent_obj.challenges_completed) if agent_obj else []
             }
         else:
             return agent_id, {
@@ -1419,6 +1435,7 @@ async def get_agents_state():
             "current_node": agent_state.current_node,
             "last_executed_tool_block": agent_state.last_executed_tool_block,
             "last_agent_block": agent_state.last_agent_block,
+            "challenges_completed": getattr(agent_state, "challenges_completed", []),
         }
 
     return {
