@@ -9,9 +9,7 @@
 [![Daedalus](https://img.shields.io/badge/Daedalus-Labs-7c3aed)](https://www.dedaluslabs.ai/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38bdf8?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-<p align="center">
-  <img src="readme_Images/Discer.io_bann2er_updated_2.png" width="60%" alt="Discer.io Banner">
-</p>
+
 
 ## Overview
 
