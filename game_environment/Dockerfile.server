@@ -1,0 +1,22 @@
+# Discer.io Game Environment Physics Server
+FROM oven/bun:1
+
+WORKDIR /app
+
+# Copy root workspace and subpackage definitions
+COPY package.json bun.lock* ./
+COPY common/package.json ./common/
+COPY server/package.json ./server/
+
+# Install dependencies using Bun
+RUN bun install
+
+# Copy source code
+COPY common ./common
+COPY server ./server
+
+WORKDIR /app/server
+
+EXPOSE 8000
+
+CMD ["bun", "run", "src/index.ts"]

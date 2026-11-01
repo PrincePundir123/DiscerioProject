@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  # 1. Game Environment Physics & WebSocket Server
+  game-server:
+    build:
+      context: ./game_environment
+      dockerfile: Dockerfile.server
+    container_name: discerio-game-server
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    environment:
+      - PORT=8000
+
+  # 2. Agent Orchestration Backend (FastAPI + LLMs)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: discerio-backend
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
+    environment:
+      - GAME_SERVER_URL=http://game-server:8000
+      - LLM_PROVIDER=${LLM_PROVIDER:-openai}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL}
+      - DEFAULT_MODEL=${DEFAULT_MODEL:-gpt-4o-mini}
+      - STEP_DELAY=4.0
+    depends_on:
+      - game-server
+
+  # 3. Frontend Next.js Web Application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: discerio-frontend
+    ports:
+      - "3001:3000"
+    restart: unless-stopped
+    environment:
+      - NEXT_PUBLIC_BACKEND_URL=http://localhost:8001
+      - NEXT_PUBLIC_GAME_URL=http://localhost:3000
+    depends_on:
+      - backend
+
+networks:
+  default:
+    name: discerio-network
