@@ -94,6 +94,12 @@ Real-time multiplayer battle arena built with TypeScript/Bun:
 - Game state fed to LLM with nearby agents, loot, obstacles, and ammo status
 - Supports strategic planning via MCP server integration (Daedalus mode only)
 
+**Real-Time Thought Bubbles & Arena Feedback**
+
+- Live comic-style speech and thought bubbles render dynamically above agents' sprites in the combat arena
+- Visualizes the agent's real-time LLM reasoning (e.g. `?? Scanning zone for ammo`, `?? Attacking hostile!`)
+- Proves autonomous decision-making in live action to players and evaluators
+
 **Combat Mechanics**
 
 - Attack action fires 2 shots with 200ms delay between shots
@@ -111,12 +117,25 @@ Real-time multiplayer battle arena built with TypeScript/Bun:
 
 ## Quick Start
 
-### Prerequisites
+### Option 1: Instant Local Launch (Windows)
+Run the automated launcher script to start all 4 services concurrently in separate terminals:
+```powershell
+.\start_all.bat
+```
 
+### Option 2: Run with Docker Compose
+Run all services with a single command using Docker:
+```bash
+docker compose up --build
+```
+
+### Option 3: Manual Step-by-Step Setup
+
+#### Prerequisites
 - Node.js 18+
 - Python 3.10+
-- Bun runtime
-- OpenAI API key and/or Daedalus API key
+- Bun runtime (installed via `powershell -c "irm bun.sh/install.ps1 | iex"`)
+- OpenAI API key, Google Gemini, or Daedalus key
 
 ### Installation
 
