@@ -81,7 +81,7 @@
 
 1. Install dependencies:
    ```bash
-   cd /home/roman/surio_copy_project/simplified_game_env
+   cd ./game_environment
    bun install
    ```
 

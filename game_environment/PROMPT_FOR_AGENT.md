@@ -8,7 +8,7 @@ Implement the complete working game following the detailed plan in `IMPLEMENTATI
 
 ## Key Instructions
 1. **Follow the 4 phases sequentially** - Foundation → Collision/Shooting → Items/Inventory → Polish
-2. **Copy liberally from original Suroi codebase** at `/home/roman/suroi/` - especially utilities (vector, hitbox, math, grid)
+2. **Copy liberally from original Suroi codebase** at `https://github.com/HasangerGames/suroi` - especially utilities (vector, hitbox, math, grid)
 3. **Simplify complex systems** - Use the simplified versions described in the plan (JSON packets, 2 weapon slots, etc.)
 4. **Build from scratch** - UI, map, effects (keep it minimal)
 5. **Reference patterns** - Use the code examples in IMPLEMENTATION_PLAN.md as templates
