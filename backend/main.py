@@ -3,7 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, validator
 from typing import List, Optional, Literal, Union, Dict, Any
 from enum import Enum
-from dedalus_labs import AsyncDedalus, DedalusRunner
+try:
+    from dedalus_labs import AsyncDedalus, DedalusRunner
+except ImportError:
+    AsyncDedalus = None
+    DedalusRunner = None
 from dotenv import load_dotenv
 import logging
 import asyncio
@@ -646,7 +650,11 @@ async def execute_mystery_action() -> str:
         logger.info("Executing mystery action - fetching cat fact from MCP")
         
         # Use Dedalus SDK with MCP server for cat facts
-        from dedalus_labs import AsyncDedalus, DedalusRunner
+        try:
+    from dedalus_labs import AsyncDedalus, DedalusRunner
+except ImportError:
+    AsyncDedalus = None
+    DedalusRunner = None
         
         client = AsyncDedalus()
         runner = DedalusRunner(client)
