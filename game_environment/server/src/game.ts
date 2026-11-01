@@ -379,7 +379,6 @@ export class Game {
                     if ('challengesCompleted' in player) {
                         (player as any).addChallengeCompletion("ammo_collected");
                     }
-                }
                 } else {
                     // It's a weapon
                     const success = player.addWeapon(loot.type);
@@ -393,7 +392,7 @@ export class Game {
         }
     }
 
-    checkInteractions(player: any): void {
+    checkInteractions(player: Player | AIAgent): void {
         const interactRadiusSquared = 10 * 10; // 10 unit interaction radius
 
         for (const obstacle of this.obstacles) {
