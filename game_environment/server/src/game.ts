@@ -363,12 +363,23 @@ export class Game {
                     loot.picked = true;
                     loot.dead = true;
                     console.log(`[Game] ${player.username} picked up ${loot.count} XP`);
+                    if ('challengesCompleted' in player) {
+                        const agent = player as any;
+                        agent.addChallengeCompletion("xp_orb_collected");
+                        if (agent.hasCompletedChallenge("gate_unlocked") || agent.position.x > 600) {
+                            agent.addChallengeCompletion("lesson_1_completed");
+                        }
+                    }
                 } else if (loot.type.startsWith("ammo_")) {
                     const ammoType = loot.type.replace("ammo_", "");
                     player.addAmmo(ammoType, loot.count);
                     loot.picked = true;
                     loot.dead = true;
                     console.log(`[Game] ${player.username} picked up ${loot.count}x ${ammoType} ammo`);
+                    if ('challengesCompleted' in player) {
+                        (player as any).addChallengeCompletion("ammo_collected");
+                    }
+                }
                 } else {
                     // It's a weapon
                     const success = player.addWeapon(loot.type);

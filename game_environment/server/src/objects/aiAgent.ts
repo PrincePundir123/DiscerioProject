@@ -18,6 +18,7 @@ export class AIAgent extends GameObject {
     color: number;
     xp: number = 0; // XP tracking
     kills: number = 0; // Kill counter (persists through death)
+    challengesCompleted: string[] = [];
 
     weapons: [Gun | null, Gun | null] = [null, null];
     activeWeaponIndex: 0 | 1 = 0;
@@ -59,6 +60,17 @@ export class AIAgent extends GameObject {
     }
 
     // Set command from backend API
+    addChallengeCompletion(challenge: string): void {
+        if (!this.challengesCompleted.includes(challenge)) {
+            this.challengesCompleted.push(challenge);
+            console.log(`[AIAgent ${this.username}] Challenge unlocked: ${challenge}`);
+        }
+    }
+
+    hasCompletedChallenge(challenge: string): boolean {
+        return this.challengesCompleted.includes(challenge);
+    }
+
     setCommand(input: InputPacket): void {
         this.currentInput = input;
     }
@@ -344,6 +356,9 @@ export class AIAgent extends GameObject {
                     source.kills += 1;
                     console.log(`[AIAgent] ${source.username} got a kill! Total kills: ${source.kills}`);
                 }
+                if ('addChallengeCompletion' in source) {
+                    source.addChallengeCompletion("combat_victory");
+                }
             }
             this.die();
         }
@@ -546,6 +561,7 @@ export class AIAgent extends GameObject {
                 // Safe to move to interpolated position
                 this.position = newPosition;
                 this.hitbox.position = this.position;
+                this.rotation = Angle.betweenPoints(this.position, this.moveTarget);
                 game.grid.updateObject(this);
             } else {
                 // Collision detected during smooth movement - stop at current position

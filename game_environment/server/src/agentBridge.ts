@@ -57,6 +57,7 @@ export interface BackendGameState {
         health?: number;
         open?: boolean;
     }>;
+    challenges_completed: string[];
 }
 
 export class AgentBridge {
@@ -94,21 +95,21 @@ export class AgentBridge {
         if (customThought && typeof customThought === "string" && customThought.trim()) {
             const cleanThought = customThought.replace(/^REASONING:\s*/i, "").trim();
             const shortThought = cleanThought.length > 40 ? cleanThought.substring(0, 37) + "..." : cleanThought;
-            agent.setSpeechText(`?? ${shortThought}`);
+            agent.setSpeechText(`💭 ${shortThought}`);
         } else if (action.tool_type === "move") {
             const x = Math.round(action.parameters.x ?? 0);
             const y = Math.round(action.parameters.y ?? 0);
-            agent.setSpeechText(`?? Move (${x}, ${y})`);
+            agent.setSpeechText(`🏃 Move (${x}, ${y})`);
         } else if (action.tool_type === "attack") {
-            agent.setSpeechText(`?? Attacking target!`);
+            agent.setSpeechText(`🎯 Attacking target!`);
         } else if (action.tool_type === "collect") {
-            agent.setSpeechText(`?? Collecting loot`);
+            agent.setSpeechText(`📦 Collecting loot`);
         } else if (action.tool_type === "switch_weapon") {
-            agent.setSpeechText(`?? Switch weapon`);
+            agent.setSpeechText(`🔄 Switch weapon`);
         } else if (action.tool_type === "plan") {
-            agent.setSpeechText(`?? Strategic planning`);
+            agent.setSpeechText(`🧠 Strategic planning`);
         } else if (action.tool_type === "search") {
-            agent.setSpeechText(`?? Knowledge search`);
+            agent.setSpeechText(`🔍 Knowledge search`);
         }
 
         switch (action.tool_type) {
@@ -305,6 +306,7 @@ export class AgentBridge {
                 const unlocked = obstacle.unlockWithPassword(text);
                 if (unlocked) {
                     console.log(`[AgentBridge] Agent ${agent.username} unlocked gate ${obstacle.id}!`);
+                    agent.addChallengeCompletion("gate_unlocked");
                 }
             }
         }
@@ -424,7 +426,8 @@ export class AgentBridge {
             just_died: agent.justDied,
             nearby_agents: nearbyAgents.sort((a, b) => a.distance - b.distance),
             nearby_loot: nearbyLoot.sort((a, b) => a.distance - b.distance),
-            nearby_obstacles: nearbyObstacles.sort((a, b) => a.distance - b.distance)
+            nearby_obstacles: nearbyObstacles.sort((a, b) => a.distance - b.distance),
+            challenges_completed: agent.challengesCompleted || []
         };
     }
 
