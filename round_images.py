@@ -40,7 +40,7 @@ def add_rounded_corners(image_path, radius=30):
 
 def main():
     """Process all images in the readme_Images directory."""
-    images_dir = Path("/home/roman/hack_princeton_F25/readme_Images")
+    images_dir = Path("./readme_Images")
 
     # Supported image formats
     image_extensions = {'.png', '.jpg', '.jpeg', '.webp', '.bmp'}
