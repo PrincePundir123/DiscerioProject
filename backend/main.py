@@ -651,10 +651,10 @@ async def execute_mystery_action() -> str:
         
         # Use Dedalus SDK with MCP server for cat facts
         try:
-    from dedalus_labs import AsyncDedalus, DedalusRunner
-except ImportError:
-    AsyncDedalus = None
-    DedalusRunner = None
+            from dedalus_labs import AsyncDedalus, DedalusRunner
+        except ImportError:
+            AsyncDedalus = None
+            DedalusRunner = None
         
         client = AsyncDedalus()
         runner = DedalusRunner(client)
