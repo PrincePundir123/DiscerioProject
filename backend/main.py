@@ -33,13 +33,14 @@ except Exception as e:
 DEFAULT_STEP_DELAY = float(os.getenv("STEP_DELAY", "6.0"))
 LLM_TIMEOUT = float(os.getenv("LLM_TIMEOUT", "5.0"))
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL")
 DAEDALUS_API_KEY = os.getenv("DEDALUS_API_KEY")
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "daedalus").lower()
 
 # Initialize OpenAI client for chat functionality
 openai_client = None
 if OPENAI_API_KEY:
-    openai_client = OpenAI(api_key=OPENAI_API_KEY)
+    openai_client = OpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
 else:
     logger.warning("OPENAI_API_KEY not found in environment variables. Chat functionality will be disabled.")
 
@@ -289,15 +290,36 @@ class OpenAIProvider(LLMProvider):
             )
 
 
+class MockProvider(LLMProvider):
+    """Fallback mock provider when no API key is configured"""
+
+    def __init__(self):
+        logger.warning("Mock provider initialized. Real LLM calls will require an API key in backend/.env")
+
+    async def run(
+        self,
+        input: str,
+        model: str,
+        mcp_servers: Optional[List[str]] = None,
+        timeout: float = LLM_TIMEOUT
+    ) -> LLMResponse:
+        logger.warning("Mock LLM responding - please configure OPENAI_API_KEY or DEDALUS_API_KEY in backend/.env for real decisions")
+        return LLMResponse(final_output="ACTION: move(x=0, y=0)\nREASONING: Mock mode - configure API key in backend/.env")
+
+
 def create_llm_provider() -> LLMProvider:
     """Factory function to create the appropriate LLM provider based on configuration"""
-    if LLM_PROVIDER == "openai":
-        return OpenAIProvider()
-    elif LLM_PROVIDER == "daedalus":
-        return DaedalusProvider()
-    else:
-        logger.warning(f"Unknown LLM_PROVIDER '{LLM_PROVIDER}', defaulting to daedalus")
-        return DaedalusProvider()
+    try:
+        if LLM_PROVIDER == "openai":
+            return OpenAIProvider()
+        elif LLM_PROVIDER == "daedalus":
+            return DaedalusProvider()
+        else:
+            logger.warning(f"Unknown LLM_PROVIDER '{LLM_PROVIDER}', defaulting to daedalus")
+            return DaedalusProvider()
+    except ValueError as e:
+        logger.warning(f"LLM Provider initialization note: {e}. Falling back to MockProvider for local testing.")
+        return MockProvider()
 
 
 # ============================================================================

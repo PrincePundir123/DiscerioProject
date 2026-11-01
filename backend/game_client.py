@@ -10,11 +10,13 @@ from typing import Dict, Any, Optional, List
 logger = logging.getLogger(__name__)
 
 
+import os
+
 class GameEnvironmentClient:
     """Client for interacting with the game environment API"""
 
-    def __init__(self, base_url: str = "http://localhost:8000"):
-        self.base_url = base_url
+    def __init__(self, base_url: str = None):
+        self.base_url = base_url or os.getenv("GAME_SERVER_URL", "http://localhost:8000")
         self.client = httpx.AsyncClient(timeout=10.0)
 
     async def close(self):
