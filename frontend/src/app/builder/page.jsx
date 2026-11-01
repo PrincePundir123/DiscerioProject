@@ -116,7 +116,7 @@ const AGENT_TEMPLATES = {
     agentId: 'zone2_infiltrator_01',
     blocks: [
       { id: 'b_start', blockType: 'action', definitionId: 'onStart', label: 'On Start', action_type: 'onStart', color: '#10b981', x: 80, y: 120 },
-      { id: 'b_agent', blockType: 'agent', definitionId: 'agent', label: 'Agent Decision', color: '#f59e0b', x: 280, y: 120, model: 'openai/gpt-4o-mini', system_prompt: 'You are an agent infiltrating Zone 2. You must reach the gate, speak password "zohran mamdani", and collect the XP orb.', user_prompt: 'Navigate to gate at (640, 640). When near gate, speak "zohran mamdani". When open, move right and collect the orb.' },
+      { id: 'b_agent', blockType: 'agent', definitionId: 'agent', label: 'Agent Decision', color: '#f59e0b', x: 280, y: 120, model: 'openai/gpt-4o-mini', system_prompt: 'You are an agent infiltrating Zone 2. You must reach the gate, speak password "open sesame", and collect the XP orb.', user_prompt: 'Navigate to gate at (640, 640). When near gate, speak "open sesame". When open, move right and collect the orb.' },
       { id: 'b_move', blockType: 'tool', definitionId: 'move', label: 'Move', tool_type: 'move', color: '#3b82f6', parameters: { x: 'number', y: 'number' }, x: 520, y: 60 },
       { id: 'b_speak', blockType: 'tool', definitionId: 'speak', label: 'Speak', tool_type: 'speak', color: '#3b82f6', parameters: { text: 'string' }, x: 520, y: 150 },
       { id: 'b_collect', blockType: 'tool', definitionId: 'collect', label: 'Collect', tool_type: 'collect', color: '#3b82f6', parameters: {}, x: 520, y: 240 },

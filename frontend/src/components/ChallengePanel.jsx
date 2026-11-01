@@ -18,9 +18,9 @@ function ChallengePanel({ onChallengeSelect, currentChallenge }) {
         'Add "On Start" entry point',
         'Connect to Agent (LLM) block',
         'Connect "Move" and "Speak" tools',
-        'Speak "zohran mamdani" to open gate'
+        'Speak "open sesame" to open gate'
       ],
-      hint: 'Configure your agent to say "zohran mamdani" near the gate to open it!'
+      hint: 'Configure your agent to say "open sesame" near the gate to open it!'
     },
     {
       id: 'efficient-path',

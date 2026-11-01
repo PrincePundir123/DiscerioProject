@@ -79,13 +79,13 @@ export class Obstacle extends GameObject {
 
     /**
      * Check if spoken text is the correct password for this gate
-     * Password: "zohran mamdani" (case-insensitive)
+     * Password: "open sesame" (case-insensitive)
      */
     checkPassword(text: string): boolean {
         if (this.definition.idString !== 'gate') return false;
 
         const normalizedText = text.toLowerCase().trim();
-        const password = "zohran mamdani";
+        const password = "open sesame";
 
         return normalizedText.includes(password);
     }
