@@ -89,6 +89,28 @@ export class AgentBridge {
             }
         };
 
+        // Display thought / action bubble for live visual feedback in the combat arena
+        const customThought = (action.parameters as any)?.reasoning || (action.parameters as any)?.text;
+        if (customThought && typeof customThought === "string" && customThought.trim()) {
+            const cleanThought = customThought.replace(/^REASONING:\s*/i, "").trim();
+            const shortThought = cleanThought.length > 40 ? cleanThought.substring(0, 37) + "..." : cleanThought;
+            agent.setSpeechText(`?? ${shortThought}`);
+        } else if (action.tool_type === "move") {
+            const x = Math.round(action.parameters.x ?? 0);
+            const y = Math.round(action.parameters.y ?? 0);
+            agent.setSpeechText(`?? Move (${x}, ${y})`);
+        } else if (action.tool_type === "attack") {
+            agent.setSpeechText(`?? Attacking target!`);
+        } else if (action.tool_type === "collect") {
+            agent.setSpeechText(`?? Collecting loot`);
+        } else if (action.tool_type === "switch_weapon") {
+            agent.setSpeechText(`?? Switch weapon`);
+        } else if (action.tool_type === "plan") {
+            agent.setSpeechText(`?? Strategic planning`);
+        } else if (action.tool_type === "search") {
+            agent.setSpeechText(`?? Knowledge search`);
+        }
+
         switch (action.tool_type) {
             case "move":
                 this.applyMoveCommand(input, action, agent, state);

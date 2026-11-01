@@ -283,6 +283,11 @@ class OpenAIProvider(LLMProvider):
                 detail=f"LLM request timed out after {timeout} seconds"
             )
         except Exception as e:
+            err_str = str(e).lower()
+            if "credits" in err_str or "quota" in err_str or "429" in err_str:
+                logger.warning(f"OpenAI quota exhausted ({e}). Falling back to tactical demo provider for uninterrupted gameplay.")
+                fallback = MockProvider()
+                return await fallback.run(input, model, mcp_servers, timeout)
             logger.error(f"OpenAI API error: {e}")
             raise HTTPException(
                 status_code=500,
@@ -291,10 +296,11 @@ class OpenAIProvider(LLMProvider):
 
 
 class MockProvider(LLMProvider):
-    """Fallback mock provider when no API key is configured"""
+    """Fallback mock provider when no API key is configured or quota is exhausted"""
 
     def __init__(self):
-        logger.warning("Mock provider initialized. Real LLM calls will require an API key in backend/.env")
+        self.step_counter = 0
+        logger.info("? Mock tactical provider initialized (active for demo / fallback mode)")
 
     async def run(
         self,
@@ -303,8 +309,17 @@ class MockProvider(LLMProvider):
         mcp_servers: Optional[List[str]] = None,
         timeout: float = LLM_TIMEOUT
     ) -> LLMResponse:
-        logger.warning("Mock LLM responding - please configure OPENAI_API_KEY or DEDALUS_API_KEY in backend/.env for real decisions")
-        return LLMResponse(final_output="ACTION: move(x=0, y=0)\nREASONING: Mock mode - configure API key in backend/.env")
+        self.step_counter += 1
+        tactical_steps = [
+            {"action": "move", "parameters": {"x": 10, "y": 5}, "reasoning": "Scanning zone for weapons and universal ammo"},
+            {"action": "collect", "parameters": {}, "reasoning": "Collecting nearby supplies and XP orbs"},
+            {"action": "move", "parameters": {"x": -8, "y": 12}, "reasoning": "Flanking toward destructible cover"},
+            {"action": "attack", "parameters": {}, "reasoning": "Hostile detected in perimeter - opening fire!"},
+            {"action": "switch_weapon", "parameters": {"weapon_slot": 1}, "reasoning": "Switching weapon slot for closer range engagement"},
+            {"action": "move", "parameters": {"x": 12, "y": -8}, "reasoning": "Repositioning to maintain line of sight advantage"},
+        ]
+        chosen = tactical_steps[self.step_counter % len(tactical_steps)]
+        return LLMResponse(final_output=json.dumps(chosen))
 
 
 def create_llm_provider() -> LLMProvider:
@@ -1675,6 +1690,10 @@ async def next_step_for_agents(request: NextStepRequest) -> NextStepResponse:
 
     # Update the agent's current node to the tool block's next node
     agent_state.current_node = chosen_tool_block.next
+
+    # Attach reasoning for live thought bubble rendering in game arena
+    if "reasoning" not in parameters and reasoning:
+        parameters["reasoning"] = str(reasoning)
 
     # Create the action response
     action = ToolAction(
