@@ -6,7 +6,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import AgentTabs from '../../components/AgentTabs.jsx';
 
 // Backend port - update if your backend runs on a different port
-const BACKEND_URL = 'http://localhost:8001';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8001';
 
 // Tabs localStorage keys
 const TABS_KEY = 'agent-builder-tabs';
@@ -1295,7 +1295,7 @@ export default function AgentGameBuilder() {
           <div className="flex items-center justify-between mb-1.5 flex-shrink-0">
             <h3 className={`text-xs font-bold ${theme.text.primary} uppercase tracking-wide`}>Game Preview</h3>
             <a
-              href="http://localhost:3000"
+              href={process.env.NEXT_PUBLIC_GAME_URL || "http://localhost:3000"}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-blue-600 hover:text-blue-800 transition"
@@ -1306,7 +1306,7 @@ export default function AgentGameBuilder() {
           </div>
           <div className={`flex-1 relative bg-slate-900 dark:bg-slate-950 rounded-lg border-2 ${theme.border.secondary} overflow-hidden shadow-inner min-h-0`}>
             <iframe
-              src="http://localhost:3000"
+              src={process.env.NEXT_PUBLIC_GAME_URL || "http://localhost:3000"}
               className="w-full h-full border-0"
               title="Game Environment"
               allow="fullscreen"
