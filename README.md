@@ -15,13 +15,11 @@
 
 ## Overview
 
-Discer.io is an interactive platform that teaches agentic AI concepts through a multiplayer battle royale game. Build AI agents using a visual block-based programming interface, deploy them into a live combat arena, and watch them make real-time decisions using large language models. Created for HackPrinceton Fall 2025.
+Discer.io is an interactive platform that teaches agentic AI concepts through a multiplayer battle royale game. Build AI agents using a visual block-based programming interface, deploy them into a live combat arena, and watch them make real-time decisions using large language models. An autonomous multi-agent simulation and AI learning sandbox.
 
 
 ### Project Links
 
-- [Demo Website](https://www.discerio.tech/)
-- [Devpost Project Page](https://devpost.com/software/discer-io)
 
 
 ### Visual Programming Interface
@@ -253,7 +251,7 @@ Each game step:
 ## Project Structure
 
 ```
-hack_princeton_F25/
+discerio/
 ├── frontend/              # React visual programming interface
 │   ├── src/
 │   │   ├── components/    # Block, Connection, Canvas components
@@ -303,7 +301,7 @@ hack_princeton_F25/
 
 Game environment inspired by [Suroi](https://github.com/HasangerGames/suroi) - an open-source 2D battle royale. Special thanks to the Suroi team for demonstrating excellent multiplayer game architecture.
 
-Built for HackPrinceton Fall 2025.
+Built for AI Agent Hackathon 2025.
 
 ## License
 
