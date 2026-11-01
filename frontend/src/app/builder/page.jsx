@@ -91,6 +91,62 @@ const INSTRUCTIONS = [
   },
 ];
 
+const AGENT_TEMPLATES = {
+  combat: {
+    name: '⚔️ Combat Duelist',
+    agentId: 'combat_bot_01',
+    blocks: [
+      { id: 'b_start', blockType: 'action', definitionId: 'onStart', label: 'On Start', action_type: 'onStart', color: '#10b981', x: 80, y: 120 },
+      { id: 'b_agent', blockType: 'agent', definitionId: 'agent', label: 'Agent Decision', color: '#f59e0b', x: 280, y: 120, model: 'openai/gpt-4o-mini', system_prompt: 'You are an aggressive battle royale combatant. Your objective is survival and eliminating opponents.', user_prompt: 'Scan nearby enemies and ammo. Move towards nearest threat, switch weapon if out of ammo, and attack.' },
+      { id: 'b_move', blockType: 'tool', definitionId: 'move', label: 'Move', tool_type: 'move', color: '#3b82f6', parameters: { x: 'number', y: 'number' }, x: 520, y: 50 },
+      { id: 'b_attack', blockType: 'tool', definitionId: 'attack', label: 'Attack', tool_type: 'attack', color: '#3b82f6', parameters: { target_player_id: 'string' }, x: 520, y: 130 },
+      { id: 'b_collect', blockType: 'tool', definitionId: 'collect', label: 'Collect', tool_type: 'collect', color: '#3b82f6', parameters: {}, x: 520, y: 210 },
+      { id: 'b_switch', blockType: 'tool', definitionId: 'switch_weapon', label: 'Switch Weapon', tool_type: 'switch_weapon', color: '#3b82f6', parameters: {}, x: 520, y: 290 },
+    ],
+    connections: [
+      { id: 'c1', from: 'b_start', to: 'b_agent' },
+      { id: 'c2', from: 'b_agent', to: 'b_move' },
+      { id: 'c3', from: 'b_agent', to: 'b_attack' },
+      { id: 'c4', from: 'b_agent', to: 'b_collect' },
+      { id: 'c5', from: 'b_agent', to: 'b_switch' },
+    ]
+  },
+  zone2_infiltrator: {
+    name: '🗝️ Zone 2 Infiltrator',
+    agentId: 'zone2_infiltrator_01',
+    blocks: [
+      { id: 'b_start', blockType: 'action', definitionId: 'onStart', label: 'On Start', action_type: 'onStart', color: '#10b981', x: 80, y: 120 },
+      { id: 'b_agent', blockType: 'agent', definitionId: 'agent', label: 'Agent Decision', color: '#f59e0b', x: 280, y: 120, model: 'openai/gpt-4o-mini', system_prompt: 'You are an agent infiltrating Zone 2. You must reach the gate, speak password "zohran mamdani", and collect the XP orb.', user_prompt: 'Navigate to gate at (640, 640). When near gate, speak "zohran mamdani". When open, move right and collect the orb.' },
+      { id: 'b_move', blockType: 'tool', definitionId: 'move', label: 'Move', tool_type: 'move', color: '#3b82f6', parameters: { x: 'number', y: 'number' }, x: 520, y: 60 },
+      { id: 'b_speak', blockType: 'tool', definitionId: 'speak', label: 'Speak', tool_type: 'speak', color: '#3b82f6', parameters: { text: 'string' }, x: 520, y: 150 },
+      { id: 'b_collect', blockType: 'tool', definitionId: 'collect', label: 'Collect', tool_type: 'collect', color: '#3b82f6', parameters: {}, x: 520, y: 240 },
+    ],
+    connections: [
+      { id: 'c1', from: 'b_start', to: 'b_agent' },
+      { id: 'c2', from: 'b_agent', to: 'b_move' },
+      { id: 'c3', from: 'b_agent', to: 'b_speak' },
+      { id: 'c4', from: 'b_agent', to: 'b_collect' },
+    ]
+  },
+  scout: {
+    name: '📦 Resource Scout',
+    agentId: 'scout_bot_01',
+    blocks: [
+      { id: 'b_start', blockType: 'action', definitionId: 'onStart', label: 'On Start', action_type: 'onStart', color: '#10b981', x: 80, y: 120 },
+      { id: 'b_agent', blockType: 'agent', definitionId: 'agent', label: 'Agent Decision', color: '#f59e0b', x: 280, y: 120, model: 'openai/gpt-4o-mini', system_prompt: 'You are a strategic resource scout.', user_prompt: 'Plan your route to the nearest ammo and health crates, avoiding dangerous confrontation.' },
+      { id: 'b_plan', blockType: 'tool', definitionId: 'plan', label: 'Plan', tool_type: 'plan', color: '#3b82f6', parameters: { plan: 'string' }, x: 520, y: 70 },
+      { id: 'b_move', blockType: 'tool', definitionId: 'move', label: 'Move', tool_type: 'move', color: '#3b82f6', parameters: { x: 'number', y: 'number' }, x: 520, y: 160 },
+      { id: 'b_collect', blockType: 'tool', definitionId: 'collect', label: 'Collect', tool_type: 'collect', color: '#3b82f6', parameters: {}, x: 520, y: 250 },
+    ],
+    connections: [
+      { id: 'c1', from: 'b_start', to: 'b_agent' },
+      { id: 'c2', from: 'b_agent', to: 'b_plan' },
+      { id: 'c3', from: 'b_agent', to: 'b_move' },
+      { id: 'c4', from: 'b_agent', to: 'b_collect' },
+    ]
+  }
+};
+
 export default function AgentGameBuilder() {
   const theme = useTheme();
   const [isClient, setIsClient] = useState(false);
@@ -282,6 +338,63 @@ export default function AgentGameBuilder() {
         return newTabs;
       }
     });
+  };
+
+  const handleLoadTemplate = (templateKey) => {
+    if (!templateKey) return;
+    const template = AGENT_TEMPLATES[templateKey];
+    if (!template) return;
+    setAgentId(template.agentId);
+    setBlocks(template.blocks);
+    setConnections(template.connections);
+    blockIdCounter.current = 20;
+    toast.success(`Loaded: ${template.name}`);
+  };
+
+  const handleExportAgent = () => {
+    if (blocks.length === 0) {
+      toast.error('Canvas is empty!');
+      return;
+    }
+    const data = {
+      agentId: agentId || 'custom_agent',
+      blocks,
+      connections,
+      exportedAt: new Date().toISOString()
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${agentId || 'agent'}_config.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('Agent exported as JSON!');
+  };
+
+  const handleImportAgent = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const data = JSON.parse(event.target.result);
+        if (data.blocks && data.connections) {
+          setAgentId(data.agentId || 'imported_agent');
+          setBlocks(data.blocks);
+          setConnections(data.connections);
+          blockIdCounter.current = data.blocks.length + 10;
+          toast.success('Agent loaded successfully!');
+        } else {
+          toast.error('Invalid agent JSON format');
+        }
+      } catch (err) {
+        toast.error('Failed to parse JSON file');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
   };
 
   // Load from localStorage only on client side after mount
@@ -1536,7 +1649,7 @@ export default function AgentGameBuilder() {
             </div>
             
             {/* Agent ID input */}
-            <div className="mb-4">
+            <div className="mb-3">
               <input
                 type="text"
                 value={agentId}
@@ -1549,6 +1662,38 @@ export default function AgentGameBuilder() {
                   borderColor: '#404040'
                 } : {}}
               />
+            </div>
+
+            {/* Quick Templates & Tools */}
+            <div className="mb-4 space-y-2">
+              <label className={`text-xs font-bold ${theme.text.secondary} uppercase tracking-wider block`}>Starter Templates</label>
+              <select
+                onChange={(e) => {
+                  handleLoadTemplate(e.target.value);
+                  e.target.value = '';
+                }}
+                defaultValue=""
+                className={`w-full px-2.5 py-1.5 text-xs rounded border ${theme.components.input.border} ${theme.components.input.bg} ${theme.components.input.text} focus:outline-none focus:ring-1 focus:ring-blue-500`}
+              >
+                <option value="" disabled>⚡ Choose a template...</option>
+                <option value="combat">⚔️ Combat Duelist</option>
+                <option value="zone2_infiltrator">🗝️ Zone 2 Infiltrator</option>
+                <option value="scout">📦 Resource Scout</option>
+              </select>
+
+              <div className="flex gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={handleExportAgent}
+                  className="flex-1 py-1 px-2 text-xs rounded bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 font-medium transition-colors"
+                >
+                  💾 Save JSON
+                </button>
+                <label className="flex-1 py-1 px-2 text-xs rounded bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 border border-purple-500/30 font-medium transition-colors text-center cursor-pointer">
+                  📂 Load
+                  <input type="file" accept=".json" onChange={handleImportAgent} className="hidden" />
+                </label>
+              </div>
             </div>
 
             {/* Block categories */}
