@@ -22,7 +22,8 @@ Discer.io is an interactive platform that teaches agentic AI concepts through a 
 
 ### Project Links
 
-
+- **Live Web Application**: [https://discer-frontend.onrender.com/](https://discer-frontend.onrender.com/)
+- **GitHub Repository**: [https://github.com/PrincePundir123/DiscerioProject](https://github.com/PrincePundir123/DiscerioProject)
 
 ### Visual Programming Interface
 
